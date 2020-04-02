@@ -1,6 +1,12 @@
-#!/usr/bin/env python
-import requests,sys,time,os
-top = """
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import requests
+import sys
+import time
+import os
+top = \
+    """
  #################################################
  # Open redirect Scanner for dummies like me :)  #
  # by: ak1t4 (know.0nix@gmail.com)               #
@@ -10,6 +16,7 @@ top = """
  #################################################
     """
 
+
 def main():
     os.system('clear')
 
@@ -17,9 +24,9 @@ def main():
 
     # Payloads example
     # This is replaced with a payloads.list (a lot of amazing redirect payloads)
-    #payload = '//www.google.com/%2F..'
-    #payload2 = '//www.yahoo.com//'
-    #payload3 = '//www.yahoo.com//%2F%2E%2E'
+    # payload = '//www.google.com/%2F..'
+    # payload2 = '//www.yahoo.com//'
+    # payload3 = '//www.yahoo.com//%2F%2E%2E'
 
     # first argument - file with subdomains
 
@@ -29,67 +36,60 @@ def main():
 
     payload = sys.argv[2]
 
+    # open file with subdomains and iterates
 
-
-    #open file with subdomains and iterates
- 
     with open(file) as f:
 
-		print ""
-		print "Searching the ex-girlfriend target &  Holy Grail at [303 see others].."
-		print ""
-		time.sleep(4)
+        print('')
+        print('Searching the ex-girlfriend target &  Holy Grail at [303 see others]..')
+        print('')
+        time.sleep(4)
 
+        # loop for find the trace of all requests (303 is an open redirect) see the final destination
 
-		# loop for find the trace of all requests (303 is an open redirect) see the final destination
+        for line in f:
 
-                for line in f:
-		    
+            try:
 
-                    try:
+                line2 = line.strip()
 
-                        line2 = line.strip()
+                line3 = line2 + payload
 
-                        line3 = 'https://' + line2 + payload
+                print(line3)
 
-                        print line3
+                response = requests.get(line3, verify=True)
 
-                        response = requests.get(line3, verify=True)    
+                print(response)
 
-                        print response
+                try:
 
-                        try:
+                    if response.history:
 
-                            if response.history:
-                             
-                                print "Request was redirected"
-                             
-                                for resp in response.history:
+                        print('Request was redirected')
 
-                                    print "|"
-                                    print resp.status_code, resp.url
-                                    
+                        for resp in response.history:
 
-                                print "Final destination:"
+                            print('|')
+                            print(resp.status_code, resp.url)
 
-                                print "+"
-                                print response.status_code, response.url
+                        print('Final destination:')
 
-                                
-                            else:
+                        print('+')
+                        prin(response.status_code, response.url)
+                    else:
 
-                                print "Request was not redirected"
+                        print('Request was not redirected')
+                except:
 
-                            
-                        except:
-                            print "connection error :("
+                    print('connection error :(')
+            except:
 
-                    except:
+                print('quitting..')
 
-                        print "quitting.."
 
 try:
-	main()
+    main()
 except IndexError:
-	print(" Usage: python "+sys.argv[0]+" [subdomains.file] [redirect.payload]\n")
-        print(" Example python "+sys.argv[0]+" uber.list '//yahoo.com/%2F..'\n")
+    print(' Usage: python ' + sys.argv[0] + ' [subdomains.file] [redirect.payload]\n')
+    print(' Example python ' + sys.argv[0] + " uber.list '//yahoo.com/%2F..'\n")
+
